@@ -204,6 +204,27 @@ describe("lindex", function () {
   });
 });
 
+describe("ltrim", function() {
+  it("trims list", function(done) {
+    var r = redismock.createClient();
+    var somekey = "somekey";
+    r.lpush(somekey, "a", function() {
+      r.lpush(somekey, "b", function() {
+        r.lpush(somekey, "c", function() {
+          r.lpush(somekey, "d", function() {
+            r.ltrim(somekey, 0, 2, function() {
+              r.lrange(somekey, 0, 4, function(err, result) {
+                result.should.eql(["d", "c", "b"]);
+                done();
+              });
+            });
+          });
+        });
+      });      
+    });
+  })
+})
+
 describe("lset", function () {
 
   var testKey = "myKey4";
